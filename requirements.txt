@@ -8,3 +8,4 @@ drf-spectacular
 djoser
 djangorestframework_simplejwt
 mysqlclient
+Pillow
