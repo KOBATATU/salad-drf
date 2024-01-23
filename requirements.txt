@@ -1,0 +1,10 @@
+django
+djangorestframework
+markdown
+django-filter
+PyYAML
+uritemplate
+drf-spectacular
+djoser
+djangorestframework_simplejwt
+mysqlclient

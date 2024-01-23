@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  db: # MySQLコンテナのサービス名
+    image: mysql:8.0 # 使用するMySQLのイメージ
+    command: --default-authentication-plugin=mysql_native_password # 認証プラグインの設定
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "3306:3306" # ホストとコンテナのポートマッピング
+    volumes:
+      - db-data:/var/lib/mysql # データ永続化用のボリューム
+
+  web: # Djangoアプリケーションのサービス名
+    build: .
+    command: python ./manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/work
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db # webサービスがdbサービスに依存していることを示す
+    environment:
+      DB_NAME: ${MYSQL_DATABASE} # 環境変数の設定
+      DB_USER: ${MYSQL_USER}
+      DB_PASS: ${MYSQL_PASSWORD}
+      DB_SERVICE: 'db'
+      DB_PORT: '3306'
+
+volumes:
+  db-data: # MySQLのデータ保持用のボリューム
