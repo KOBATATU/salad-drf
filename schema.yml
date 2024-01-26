@@ -1,0 +1,283 @@
+openapi: 3.0.3
+info:
+  title: Your Project API
+  version: 1.0.0
+  description: Your project description
+paths:
+  /user/me/:
+    get:
+      operationId: user_me_retrieve
+      tags:
+      - user
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserMe'
+          description: ''
+    put:
+      operationId: user_me_update
+      tags:
+      - user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserMe'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserMe'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserMe'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserMe'
+          description: ''
+    patch:
+      operationId: user_me_partial_update
+      tags:
+      - user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserMe'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUserMe'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserMe'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserMe'
+          description: ''
+    delete:
+      operationId: user_me_destroy
+      tags:
+      - user
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /users/:
+    get:
+      operationId: users_list
+      tags:
+      - users
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+          description: ''
+  /users/{id}/:
+    get:
+      operationId: users_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this user.
+        required: true
+      tags:
+      - users
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+components:
+  schemas:
+    PatchedUserMe:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        username:
+          type: string
+          readOnly: true
+          title: ユーザー名
+          description: この項目は必須です。半角アルファベット、半角数字、@/./+/-/_ で150文字以下にしてください。
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        first_name:
+          type: string
+          title: 名
+          maxLength: 150
+        last_name:
+          type: string
+          title: 姓
+          maxLength: 150
+        location:
+          type: string
+          nullable: true
+          title: 住居
+          maxLength: 50
+        birth_date:
+          type: string
+          format: date
+          nullable: true
+          title: 誕生日
+        is_private:
+          type: boolean
+        profile:
+          $ref: '#/components/schemas/Profile'
+    Profile:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        nickname:
+          type: string
+          title: ニックネーム
+          maxLength: 64
+        bio:
+          type: string
+          nullable: true
+          title: 自己紹介
+          maxLength: 1000
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+      required:
+      - id
+      - nickname
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        username:
+          type: string
+          title: ユーザー名
+          description: この項目は必須です。半角アルファベット、半角数字、@/./+/-/_ で150文字以下にしてください。
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        first_name:
+          type: string
+          title: 名
+          maxLength: 150
+        last_name:
+          type: string
+          title: 姓
+          maxLength: 150
+        location:
+          type: string
+          nullable: true
+          title: 住居
+          maxLength: 50
+        birth_date:
+          type: string
+          format: date
+          nullable: true
+          title: 誕生日
+        is_private:
+          type: boolean
+        profile:
+          allOf:
+          - $ref: '#/components/schemas/Profile'
+          readOnly: true
+      required:
+      - id
+      - profile
+      - username
+    UserMe:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        username:
+          type: string
+          readOnly: true
+          title: ユーザー名
+          description: この項目は必須です。半角アルファベット、半角数字、@/./+/-/_ で150文字以下にしてください。
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        first_name:
+          type: string
+          title: 名
+          maxLength: 150
+        last_name:
+          type: string
+          title: 姓
+          maxLength: 150
+        location:
+          type: string
+          nullable: true
+          title: 住居
+          maxLength: 50
+        birth_date:
+          type: string
+          format: date
+          nullable: true
+          title: 誕生日
+        is_private:
+          type: boolean
+        profile:
+          $ref: '#/components/schemas/Profile'
+      required:
+      - email
+      - id
+      - profile
+      - username
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
