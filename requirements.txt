@@ -9,3 +9,4 @@ djoser
 djangorestframework_simplejwt
 mysqlclient
 Pillow
+pip install django-cors-headers

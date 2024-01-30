@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 import os
 from pathlib import Path
-
+from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -27,7 +27,9 @@ SECRET_KEY = 'django-insecure-k7t8$fc46ie3mfg9^f5k4&xu^vx#oxhht9f_3p5_8e0*w5dflg
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
 
 # Application definition
 
@@ -42,9 +44,13 @@ INSTALLED_APPS = [
     #3rd party
     'rest_framework',
     'drf_spectacular',
+    'djoser',
+    'corsheaders',
+
     # app
     'user',
-    'userProfile'
+    'userProfile',
+
 ]
 
 AUTH_USER_MODEL = 'user.User'
@@ -52,6 +58,8 @@ AUTH_USER_MODEL = 'user.User'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    # 3rd party
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -113,9 +121,19 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+SIMPLE_JWT = {
+    #トークンをJWTに設定する。
+    'AUTH_HEADER_TYPES':('JWT'),
+    #トークンの持続時間の設定をする。
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60 * 24)
+}
+
 REST_FRAMEWORK = {
     # YOUR SETTINGS
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
 }
 
 #3rd party
@@ -125,9 +143,6 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 }
-
-# Internationalization
-# https://docs.djangoproject.com/en/4.2/topics/i18n/
 
 LANGUAGE_CODE = 'ja'
 

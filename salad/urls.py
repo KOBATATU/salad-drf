@@ -16,15 +16,32 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
-from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+from djoser.views import UserViewSet, TokenCreateView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+from salad import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include('user.urls')),
+    # path('auth/',include('djoser.urls')),
+    path('auth/',include('djoser.urls.jwt')),
+    path('auth/user/', UserViewSet.as_view({
+        'post': 'create',
+        'delete': 'destroy'
+    }), name='user-register-delete'),
+    # path('auth/login/', TokenCreateView.as_view(), name='login'),
+    # path('auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
-    # YOUR PATTERNS
-    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    # Optional UI:
-    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-    path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+    # path('auth/', include('djoser.urls')),
+
 ]
+
+if settings.DEBUG:
+    urlpatterns+= [
+        # YOUR PATTERNS
+        path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+        # Optional UI:
+        path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+        path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+    ]

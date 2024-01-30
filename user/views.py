@@ -1,7 +1,6 @@
-from django.shortcuts import render, get_object_or_404
-
 from rest_framework.viewsets import mixins, GenericViewSet
 from rest_framework.exceptions import NotFound
+from rest_framework.permissions import IsAuthenticated
 
 from user.permissions import IsOwner
 from user.models import User
@@ -19,7 +18,7 @@ class UserMeViews(
     mixins.DestroyModelMixin,
     GenericViewSet):
     serializer_class = UserMeSerializer
-
+    permission_classes = [IsAuthenticated, IsOwner]
     def get_object(self):
         # リクエストしたユーザーのインスタンスを取得します。
         # self.request.userは、認証されたユーザーのインスタンスです。
